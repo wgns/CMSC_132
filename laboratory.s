@@ -18,20 +18,18 @@ ARRAY_SIZE:
 FIBONACCI_ARRAY:
 	.word	1, 1, 2, 3, 5, 8, 13, 21, 34, 55
 STR_str:
-	.asciiz ""
-#STR_str2:
-#	.asciiz "Hunden, Katten, Glassen"
-
+	.asciiz "Hunden, Katten, Glassen"
+	
 	.globl DBG
 	.text
 
 ##############################################################################
 #
 #  DESCRIPTION: For an array of integers, returns the total sum of all
-#		        elements in the array.
+#		elements in the array.
 #
 #        INPUT: $a0 - address to first integer in array.
-#		        $a1 - size of array, i.e., numbers of integers in the array.
+#		$a1 - size of array, i.e., numbers of integers in the array.
 #
 #       OUTPUT: $v0 - the total sum of all integers in the array.
 #
@@ -39,20 +37,20 @@ STR_str:
 integer_array_sum:  
 
 DBG:	##### DEBUGG BREAKPOINT ######
-	addi $v0, $zero, 0			# Initialize Sum to zero.
-	add	$t0, $zero, $zero		# Initialize array index i to zero.
+	addi $v0, $zero, 0		# Initialize Sum to zero.
+	add $t0, $zero, $zero		# Initialize array index i to zero.
 	
 for_all_in_array: 
-	beq $s0, $a1, end_for_all   # Done if i == N
+	beq $s0, $a1, end_for_all   	# Done if i == N
 	mul $s4, $s0, 4     		# 4*i
 	add $s4, $a0, $s4   		# address = ARRAY + 4*i
 	lw $s4, 0($s4)      		# n = A[i]
-    add $v0, $v0, $s4   		# Sum = Sum + n
-    addi $s0, $s0, 1    		# i++ 
-    j for_all_in_array  		# return to loop 
+    	add $v0, $v0, $s4   		# Sum = Sum + n
+    	addi $s0, $s0, 1    		# i++ 
+    	j for_all_in_array  		# return to loop 
 
 end_for_all: 
-	jr	$ra						# Return to caller.
+	jr $ra				# Return to caller.
 	
 ##############################################################################
 #
@@ -73,45 +71,45 @@ count:
 	lb $s0, 0($a0)           # load character
 	beqz $s0, str_len_end    # if character is null, end
 	addi $v0, $v0, 1         # increment length
-	addi $a0, $a0, 1		 # increment i
+	addi $a0, $a0, 1	 # increment i
 	j count
 	
 str_len_end:
-	jr	$ra
+	jr $ra
 	
 ##############################################################################
 #
 #  DESCRIPTION: For each of the characters in a string (from left to right),
-#		        call a callback subroutine.
+#		call a callback subroutine.
 #
-#		        The callback suboutine will be called with the address of
-#	            the character as the input parameter ($a0).
+#		The callback suboutine will be called with the address of
+#	        the character as the input parameter ($a0).
 #	
 #        INPUT: $a0 - address to a NUL terminated string.
-#		        $a1 - address to a callback subroutine.
+#		$a1 - address to a callback subroutine.
 #
 ##############################################################################	
 string_for_each:
 	add $s0, $a0, $zero     # copy address of string in a0 to s0
 
-	addi $sp, $sp, -4		# PUSH return address to caller
+	addi $sp, $sp, -4	# PUSH return address to caller
 	sw $ra, 0($sp)
 
 str_each:
-	lb $s1, 0($s0)			# load current character to s1 to check if null
+	lb $s1, 0($s0)		# load current character to s1 to check if null
 	beqz $s1, str_each_end	# if yes, terminate
 	add $a0, $s0, $zero     # move address of current character to a0
 
 	jal $a1
 
-	addi $s0, $s0, 1		# move to next character
+	addi $s0, $s0, 1	# move to next character
 	j str_each
 
 str_each_end:
-	lw $ra, 0($sp)			# Pop return address to caller
+	lw $ra, 0($sp)		# Pop return address to caller
 	addi $sp, $sp, 4		
 
-	jr	$ra
+	jr $ra
 
 ##############################################################################
 #
@@ -140,19 +138,19 @@ upper_end:
 reverse_string:
 	add $s1, $a0, $zero 	# copy address of string to $s0
 
-	addi $sp, $sp, -4		# PUSH return address to caller
+	addi $sp, $sp, -4	# PUSH return address to caller
 	sw $ra, 0($sp)
 
-	jal string_length 		# get string length
+	jal string_length 	# get string length
 	addi $v0, $v0, -1
-	add $s0, $s1, $v0		# go to last character of string
+	add $s0, $s1, $v0	# go to last character of string
 
-	lw $ra, 0($sp)			# Pop return address to caller
+	lw $ra, 0($sp)		# Pop return address to caller
 	addi $sp, $sp, 4
 
 reverse:
-	lb $s2, 0($s1)			# get char (right)
-	lb $s3, 0($s0)			# get char (left)
+	lb $s2, 0($s1)		# get char (right)
+	lb $s3, 0($s0)		# get char (left)
 
 	sb $s2, ($s0)
 	sb $s3, ($s1)
@@ -308,7 +306,7 @@ main:
 ##############################################################################
 #
 #  DESCRIPTION : Prints out 'str = ' followed by the input string surronded
-#				 by double quotes to the console. 
+#		 by double quotes to the console. 
 #
 #        INPUT: $a0 - address to a NUL terminated string.
 #
